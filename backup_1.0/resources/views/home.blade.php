@@ -13,17 +13,18 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.js"></script>
 <style>
-        .box {
-            width: 500px;
-            margin: 0 auto;
-            border: 1px solid #ccc;
-        }
-        .button:active {
-            background-color: #3e8e41;
-            box-shadow: 0 5px #666;
-            transform: translateY(4px);
-        }
-    </style>
+    .box {
+        width: 500px;
+        margin: 0 auto;
+        border: 1px solid #ccc;
+    }
+
+    .button:active {
+        background-color: #3e8e41;
+        box-shadow: 0 5px #666;
+        transform: translateY(4px);
+    }
+</style>
 @endsection
 
 @section('content')
@@ -50,7 +51,7 @@
                     </div>
                     <div class="form-group col-md-4">
                         <label for="district">ตำบล</label>
-                        <select name="district_id" id="district" class="form-control districts">
+                        <select name="district_id" id="districts" class="form-control districts">
                             <option value="">เลือกตำบลของท่าน</option>
                         </select>
                     </div>
@@ -73,7 +74,7 @@
 @endsection
 
 @section('foot_script')
-<!--  -->
+<!-- dropdown -->
 <script type="text/javascript">
     $(document).ready(function() {
         $('.province').change(function() {
@@ -117,7 +118,10 @@
         });
     });
 
-// calendar
+
+
+
+    // calendar
     jQuery(document).ready(function($) {
         var SITEURL = "{{url('/')}}";
         $.ajaxSetup({
@@ -200,5 +204,16 @@
             $(".success").fadeOut();
         }, 1000);
     }
+
+// hide calendar
+    $(document).ready(function() {
+        $("#calendar").hide()
+        $("#districts").change(function() {
+            if ($("#districts").val() != "") {
+                $("#calendar").show()
+            }
+        });
+
+    });
 </script>
 @endsection
