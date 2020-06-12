@@ -42,7 +42,7 @@ class HomeController extends Controller
         ->groupBy('amphures.id','amphures.name_th')
         //->groupBy('amphures.id')
         ->get();
-        $output='<option value=""></option>';
+        $output='<option value="">เลือกอำเภอของท่าน</option>';
         foreach ($query as $row) {
             $output.= '<option value="'.$row->id.'">'.$row->name_th.'</option>';
         }
@@ -60,7 +60,7 @@ class HomeController extends Controller
         ->where('amphures.id',$id)
         ->groupBy('districts.name_th','districts.id')
         ->get();
-        $output='<option value=""></option>';
+        $output='<option value="">เลือกตำบลของท่าน</option>';
         foreach ($query as $row) {
             $output.= '<option value="'.$row->id.'">'.$row->name_th.'</option>';
         }
