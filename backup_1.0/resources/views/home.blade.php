@@ -1,6 +1,5 @@
 @extends('layouts.app')
 @section('header')
-<title>province</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
@@ -8,7 +7,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.js"></script>
@@ -31,9 +29,9 @@
 <div class="container my-5">
     <div class="card">
         <div class="card-body">
-            <h3>Dropdown</h3>
+            <h3>จองคิวออนไลน์</h3>
             <form>
-                <div class="form-row">
+                <div class="form-row" id="dropdown">
                     <div class="form-group col-md-4">
                         <label for="province">จังหวัด</label>
                         <select name="province_id" id="province" class="form-control province">
@@ -56,12 +54,8 @@
                         </select>
                     </div>
                 </div>
-                <div class="form-group">
-                    <form method="get" action="{{ url('/fullcalendareventmaster') }}">
-                        <button id="button" type="submit" class="btn btn-success button">Success</button>
-                    </form>
-                </div>
             </form>
+
         </div>
     </div>
 </div>
@@ -71,6 +65,35 @@
     <div class="response"></div>
     <div id='calendar'></div>
 </div>
+
+
+
+<!-- The Modal -->
+<div class="modal" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h2 class="modal-title">คำแนะนำ</h2>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+               คำอธิบาย
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">ยกเลิก</button>
+                <button class="btn btn-default btn-success" type="submit" name="submit" value="Submit">ตกลง</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @section('foot_script')
@@ -134,6 +157,7 @@
             events: SITEURL + "/fullcalendareventmaster",
             displayEventTime: true,
             editable: true,
+            fixedWeekCount: false,
             eventRender: function(event, element, view) {
                 if (event.allDay === 'true') {
                     event.allDay = true;
@@ -205,13 +229,23 @@
         }, 1000);
     }
 
-// hide calendar
+    // hide calendar
     $(document).ready(function() {
         $("#calendar").hide()
         $("#districts").change(function() {
             if ($("#districts").val() != "") {
-                $("#calendar").show()
+                $("#myModal").modal("show")
             }
+        });
+
+        $(".btn-success").click(function() {
+            $("#dropdown").submit();
+            $("#dropdown").submit(function() {
+                var val = $("input[type=submit][clicked=true]").val();
+                // DO WORK
+            });
+            $("#calendar").show();
+            $("#myModal").modal("toggle")
         });
 
     });
