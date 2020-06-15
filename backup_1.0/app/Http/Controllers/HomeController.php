@@ -65,6 +65,6 @@ class HomeController extends Controller
             $output.= '<option value="'.$row->id.'">'.$row->name_th.'</option>';
         }
         echo $output;
-        echo '<option>hello</option>';
+        
     }
 }
