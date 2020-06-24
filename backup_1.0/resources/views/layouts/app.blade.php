@@ -15,6 +15,7 @@
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
@@ -43,15 +44,13 @@
                     <ul class="navbar-nav ml-auto">
                         <!-- Authentication Links -->
                         @guest
-                            <!-- <li class="nav-item">
+                            <li class="nav-item">
                                 <a class="nav-link" href="{{ route('login') }}">{{ __('เข้าสู่ระบบ') }}</a>
-                            </li> -->
-                            @yield('login')
-                            
+                            </li>
                             @if (Route::has('register'))
-                                <!-- <li class="nav-item">
+                                <li class="nav-item">
                                     <a class="nav-link" href="{{ route('register') }}">{{ __('ลงทะเบียน') }}</a>
-                                </li> -->
+                                </li>
                             @endif
                         @else
                             <li class="nav-item dropdown">

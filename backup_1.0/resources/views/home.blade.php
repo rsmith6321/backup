@@ -3,7 +3,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
@@ -81,7 +80,7 @@
 
             <!-- Modal body -->
             <div class="modal-body">
-               คำอธิบาย
+                คำอธิบาย
             </div>
 
             <!-- Modal footer -->
@@ -147,91 +146,76 @@
     // calendar
     jQuery(document).ready(function($) {
         var SITEURL = "{{url('/')}}";
+
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
+        //holiday 
+        function getDate(today = new Date()) {
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+            var yyyy = today.getFullYear();
+
+            return yyyy + '-' + mm + '-' + dd;
+        }
+
         var calendar = $('#calendar').fullCalendar({
-            editable: true,
-            events: SITEURL + "/fullcalendareventmaster",
             displayEventTime: true,
-            editable: true,
             fixedWeekCount: false,
-            eventRender: function(event, element, view) {
-                if (event.allDay === 'true') {
-                    event.allDay = true;
-                } else {
-                    event.allDay = false;
-                }
-            },
-            selectable: true,
-            selectHelper: true,
-            select: function(start, end, allDay) {
-                var title = prompt('Event Title:');
-                if (title) {
-                    var start = $.fullCalendar.formatDate(start, "Y-MM-DD HH:mm:ss");
-                    var end = $.fullCalendar.formatDate(end, "Y-MM-DD HH:mm:ss");
-                    $.ajax({
-                        url: SITEURL + "/fullcalendareventmaster/create",
-                        data: 'title=' + title + '&start=' + start + '&end=' + end,
-                        type: "POST",
-                        success: function(data) {
-                            displayMessage("Added Successfully");
-                        }
-                    });
-                    calendar.fullCalendar('renderEvent', {
-                            title: title,
-                            start: start,
-                            end: end,
-                            allDay: allDay
-                        },
-                        true
-                    );
-                }
-                calendar.fullCalendar('unselect');
-            },
-            eventDrop: function(event, delta) {
-                var start = $.fullCalendar.formatDate(event.start, "Y-MM-DD HH:mm:ss");
-                var end = $.fullCalendar.formatDate(event.end, "Y-MM-DD HH:mm:ss");
+            contentHeight: 500,
+
+            events: function(start, end, timezone, callback) {
                 $.ajax({
-                    url: SITEURL + '/fullcalendareventmaster/update',
-                    data: 'title=' + event.title + '&start=' + start + '&end=' + end + '&id=' + event.id,
-                    type: "POST",
-                    success: function(response) {
-                        displayMessage("Updated Successfully");
-                    }
-                });
-            },
-            eventClick: function(event) {
-                var deleteMsg = confirm("Do you really want to delete?");
-                if (deleteMsg) {
-                    $.ajax({
-                        type: "POST",
-                        url: SITEURL + '/fullcalendareventmaster/delete',
-                        data: "&id=" + event.id,
-                        success: function(response) {
-                            if (parseInt(response) > 0) {
-                                $('#calendar').fullCalendar('removeEvents', event.id);
-                                displayMessage("Deleted Successfully");
+                    type: 'GET',
+                    url: 'http://127.0.0.1:8000/api/holiday',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: 'json',
+
+                    success: function(doc) {
+                        var events = [];
+                        var date = new Date();
+                        var obj = doc;
+                        var allDay = [];
+                        var holidays = [];
+                        var dayy = [];
+                        // วันเปิดทั้งหมด
+                        for (var i = 0; i < 90; i++) {
+                            date.setDate(date.getDate() + 1);
+                            if (date.getDay() != 0 && date.getDay() != 6) {
+                                allDay.push({
+                                    title: 'เปิดจอง',
+                                    start: getDate(date),
+                                })
                             }
                         }
-                    });
-                }
-            }
+                        // วันหยุด
+                        $(doc).each(function() {
+                            holidays.push({
+                                title: $(this).attr('hol_name'),
+                                start: $(this).attr('hol_date'), // will be parsed
+                                color: '#ff0000'
+                            });
+
+                        });
+                        // รวมทั้งหมด
+                            dayy = allDay.map(dcut => holidays.find(allDays => allDays.start == dcut.start) || dcut);
+                        
+
+                        callback(dayy);
+                    }
+
+                });
+            },
         });
     });
 
-    function displayMessage(message) {
-        $(".response").html("" + message + "");
-        setInterval(function() {
-            $(".success").fadeOut();
-        }, 1000);
-    }
+
 
     // hide calendar
     $(document).ready(function() {
-        $("#calendar").hide()
+        $("#calendar").show()
         $("#districts").change(function() {
             if ($("#districts").val() != "") {
                 $("#myModal").modal("show")
@@ -247,7 +231,6 @@
             $("#calendar").show();
             $("#myModal").modal("toggle")
         });
-
     });
 </script>
 @endsection
