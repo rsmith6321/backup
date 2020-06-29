@@ -20,8 +20,8 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
-Route::post('/home/fetchDistricts', 'HomeController@fetchDistricts')->name('dropdown.fetchDistricts');
-Route::post('/home/fetchAmphures', 'HomeController@fetchAmphures')->name('dropdown.fetchAmphures');
+Route::post('/home/fetchSite', 'HomeController@fetchSite')->name('dropdown.fetchSite');
+Route::post('/home/fetchTypework', 'HomeController@fetchTypework')->name('dropdown.fetchTypework');
 
 Route::get('/fullcalendareventmaster','FullCalendarEventMasterController@index');
 Route::post('/fullcalendareventmaster/create','FullCalendarEventMasterController@create');

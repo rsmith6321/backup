@@ -18,6 +18,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::apiResource('user', 'Api\UserController');
+Route::apiResource('modal', 'Api\modalController');
 
-Route::apiResource('holiday', 'Api\HolidayController');
+Route::apiResource('days', 'Api\DaysController');

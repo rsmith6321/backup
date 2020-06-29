@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\User;
-use App\Http\Resources\UserResource;
+use App\Http\Resources\ModalResource;
 use Illuminate\Support\Facades\DB;
 
-class UserController extends Controller
+class ModalController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,8 +17,8 @@ class UserController extends Controller
      */
     public function index()
     {
-        $user = User::all();
-        return response()->json($user);
+        $typework = DB::table('typework')->get();
+        return response()->json($typework);
     }
 
     /**
@@ -38,12 +38,16 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($user)
+    public function show($typework)
     {
-       
-        $results = DB::select('select id from users where username = :username', ['username' => $user]);
-        // return new UserReหsource($results); 
-        return response()->json($results);
+        $typework_comment = DB::table('typework')
+        ->select('typework.tyw_comment')
+        ->where('typework.tyw_id',$typework)
+        ->get();
+        // $obj = json_decode($typework_comment, true);
+        // $results = DB::select('select $typework_comment from typework where $typework_id = typework', ['typework' => $typework]);
+        // return new ModalResource($results); 
+        return response()->json($typework_comment);
     }
     /**
      * Update the specified resource in storage.

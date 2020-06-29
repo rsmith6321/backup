@@ -33,23 +33,23 @@
                 <div class="form-row" id="dropdown">
                     <div class="form-group col-md-4">
                         <label for="province">จังหวัด</label>
-                        <select name="province_id" id="province" class="form-control province">
+                        <select name="province_id" id="provinces" class="form-control province">
                             <option value="">เลือกจังหวัดของท่าน</option>
                             @foreach ($list as $row)
-                            <option value="{{ $row->id }}">{{$row->name_th}}</option>
+                            <option value="{{ $row->PROVINCE_ID }}">{{$row->PROVINCE_NAME}}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="form-group col-md-4">
-                        <label for="amphure">อำเภอ</label>
-                        <select name="amphure_id" id="amphure" class="form-control amphures">
-                            <option value="">เลือกอำเภอของท่าน</option>
+                        <label for="site">สำนักงาน</label>
+                        <select name="sit_id" id="site" class="form-control site">
+                            <option value="">เลือกสำนักงาน</option>
                         </select>
                     </div>
                     <div class="form-group col-md-4">
-                        <label for="district">ตำบล</label>
-                        <select name="district_id" id="districts" class="form-control districts">
-                            <option value="">เลือกตำบลของท่าน</option>
+                        <label for="typework">ประเภทงาน</label>
+                        <select name="typework_id" id="typeworks" class="form-control typework">
+                            <option value="">เลือกประเภทงาน</option>
                         </select>
                     </div>
                 </div>
@@ -79,7 +79,7 @@
             </div>
 
             <!-- Modal body -->
-            <div class="modal-body">
+            <div class="modal-body modal_comment">
                 คำอธิบาย
             </div>
 
@@ -104,14 +104,14 @@
                 var select = $(this).val();
                 var _token = $('input[name="_token"]').val();
                 $.ajax({
-                    url: "{{ route('dropdown.fetchAmphures')}}",
+                    url: "{{ route('dropdown.fetchSite')}}",
                     method: "POST",
                     data: {
                         select: select,
                         _token: _token
                     },
                     success: function(result) {
-                        $('.amphures').html(result);
+                        $('.site').html(result);
                     }
                 })
             }
@@ -121,19 +121,19 @@
     });
 
     $(document).ready(function() {
-        $('.amphures').change(function() {
+        $('.site').change(function() {
             if ($(this).val() != '') {
                 var select = $(this).val();
                 var _token = $('input[name="_token"]').val();
                 $.ajax({
-                    url: "{{ route('dropdown.fetchDistricts')}}",
+                    url: "{{ route('dropdown.fetchTypework')}}",
                     method: "POST",
                     data: {
                         select: select,
                         _token: _token
                     },
                     success: function(result) {
-                        $('.districts').html(result);
+                        $('.typework').html(result);
                     }
                 })
             }
@@ -153,13 +153,13 @@
             }
         });
         //holiday 
-        function getDate(today = new Date()) {
-            var dd = String(today.getDate()).padStart(2, '0');
-            var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-            var yyyy = today.getFullYear();
+        // function getDate(today = new Date()) {
+        //     var dd = String(today.getDate()).padStart(2, '0');
+        //     var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        //     var yyyy = today.getFullYear();
 
-            return yyyy + '-' + mm + '-' + dd;
-        }
+        //     return yyyy + '-' + mm + '-' + dd;
+        // }
 
         var calendar = $('#calendar').fullCalendar({
             displayEventTime: true,
@@ -169,41 +169,22 @@
             events: function(start, end, timezone, callback) {
                 $.ajax({
                     type: 'GET',
-                    url: 'http://127.0.0.1:8000/api/holiday',
+                    url: 'http://127.0.0.1:8000/api/days',
                     contentType: "application/json; charset=utf-8",
                     dataType: 'json',
 
                     success: function(doc) {
-                        var events = [];
-                        var date = new Date();
-                        var obj = doc;
                         var allDay = [];
-                        var holidays = [];
-                        var dayy = [];
-                        // วันเปิดทั้งหมด
-                        for (var i = 0; i < 90; i++) {
-                            date.setDate(date.getDate() + 1);
-                            if (date.getDay() != 0 && date.getDay() != 6) {
-                                allDay.push({
-                                    title: 'เปิดจอง',
-                                    start: getDate(date),
-                                })
-                            }
-                        }
-                        // วันหยุด
+
                         $(doc).each(function() {
-                            holidays.push({
-                                title: $(this).attr('hol_name'),
-                                start: $(this).attr('hol_date'), // will be parsed
-                                color: '#ff0000'
+                            allDay.push({
+                                title: $(this).attr('title'),
+                                start: $(this).attr('start'), // will be parsed
+                                color: $(this).attr('color')
                             });
 
                         });
-                        // รวมทั้งหมด
-                            dayy = allDay.map(dcut => holidays.find(allDays => allDays.start == dcut.start) || dcut);
-                        
-
-                        callback(dayy);
+                        callback(allDay);
                     }
 
                 });
@@ -211,13 +192,33 @@
         });
     });
 
+    //commemt modal
+    var zxcasd = $('.typework').val();
+    var url = 'http://127.0.0.1:8000/api/modal/' + '5';
+    var data
+    $.ajax({
+        url: url,
+        type: 'GET',
+        contentType: "application/json; charset=utf-8",
+        dataType: 'JSON',
 
+        success: function(data) {
+            // var comment= [];
+            data = JSON.stringify(data)
+
+            // x = data["tyw_comment"];
+            // window.location = "demo_json.php?x=" + data;
+            // var myObj = JSON.parse(data);
+            // alert(JSON.stringify(data));
+            $(".modal_comment").html(data);
+        }
+    });
 
     // hide calendar
     $(document).ready(function() {
-        $("#calendar").show()
-        $("#districts").change(function() {
-            if ($("#districts").val() != "") {
+        $("#calendar").hide()
+        $("#typeworks").change(function() {
+            if ($("#typeworks").val() != "") {
                 $("#myModal").modal("show")
             }
         });

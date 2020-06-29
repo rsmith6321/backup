@@ -25,44 +25,43 @@ class HomeController extends Controller
     public function index()
     {
         $list = DB::table('provinces')
-        ->orderBy('name_th','asc')
+        ->orderBy('PROVINCE_NAME','asc')
         ->get();
         return view('home')->with('list',$list);
     }
+    
 
-    function fetchAmphures(Request $request){
+    function fetchSite(Request $request){
         
         $id = $request->get('select');
-        $result = array();
         $query = DB::table('provinces')
-        ->join('amphures','provinces.id','=','amphures.province_id')
-        ->select('amphures.id','amphures.name_th')
-
-        ->where('provinces.id',$id)
-        ->groupBy('amphures.id','amphures.name_th')
-        //->groupBy('amphures.id')
+        ->join('site','provinces.PROVINCE_ID','=','site.PROVINCE_ID')
+        ->select('site.sit_id','site.sit_name')
+        ->where('provinces.PROVINCE_ID',$id)
+        ->groupBy('site.sit_id','site.sit_name')
+        //->groupBy('sit_id.id')
         ->get();
-        $output='<option value="">เลือกอำเภอของท่าน</option>';
+        $output='<option value="">เลือกสำนักงาน</option>';
         foreach ($query as $row) {
-            $output.= '<option value="'.$row->id.'">'.$row->name_th.'</option>';
+            $output.= '<option value="'.$row->sit_id.'">'.$row->sit_name.'</option>';
         }
         echo $output;
         //echo '<option>hello</option>';
     } 
 
-    function fetchDistricts(Request $request){
+    function fetchTypework(Request $request){
         
         $id = $request->get('select');
         $result = array();
-        $query = DB::table('amphures')
-        ->join('districts','amphures.id','=','districts.amphure_id')
-        ->select('districts.name_th','districts.id')
-        ->where('amphures.id',$id)
-        ->groupBy('districts.name_th','districts.id')
+        $query = DB::table('site')
+        ->join('typework','site.sit_id','=','typework.sit_id')
+        ->select('typework.tyw_name','typework.tyw_id')
+        ->where('site.sit_id',$id)
+        ->groupBy('typework.tyw_name','typework.tyw_id')
         ->get();
-        $output='<option value="">เลือกตำบลของท่าน</option>';
+        $output='<option value="">เลือกประเภทงาน</option>';
         foreach ($query as $row) {
-            $output.= '<option value="'.$row->id.'">'.$row->name_th.'</option>';
+            $output.= '<option value="'.$row->tyw_id.'">'.$row->tyw_name.'</option>';
         }
         echo $output;
         
