@@ -134,6 +134,7 @@
                     },
                     success: function(result) {
                         $('.typework').html(result);
+
                     }
                 })
             }
@@ -152,14 +153,6 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-        //holiday 
-        // function getDate(today = new Date()) {
-        //     var dd = String(today.getDate()).padStart(2, '0');
-        //     var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-        //     var yyyy = today.getFullYear();
-
-        //     return yyyy + '-' + mm + '-' + dd;
-        // }
 
         var calendar = $('#calendar').fullCalendar({
             displayEventTime: true,
@@ -192,33 +185,30 @@
         });
     });
 
-    //commemt modal
-    var zxcasd = $('.typework').val();
-    var url = 'http://127.0.0.1:8000/api/modal/' + '5';
-    var data
-    $.ajax({
-        url: url,
-        type: 'GET',
-        contentType: "application/json; charset=utf-8",
-        dataType: 'JSON',
 
-        success: function(data) {
-            // var comment= [];
-            data = JSON.stringify(data)
 
-            // x = data["tyw_comment"];
-            // window.location = "demo_json.php?x=" + data;
-            // var myObj = JSON.parse(data);
-            // alert(JSON.stringify(data));
-            $(".modal_comment").html(data);
-        }
-    });
+
+    // var data
+
 
     // hide calendar
     $(document).ready(function() {
         $("#calendar").hide()
         $("#typeworks").change(function() {
             if ($("#typeworks").val() != "") {
+                var data = $('.typework').val();
+                var url = 'http://127.0.0.1:8000/api/modal/' + data;
+                // console.log(url);
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: 'JSON',
+                    success: function(data) {
+                        $(".modal_comment").html(data[0].tyw_comment);
+                    }
+                });
+
                 $("#myModal").modal("show")
             }
         });
